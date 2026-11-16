@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="parallel_gripper" params="link2_length gripper_span">
+  <link name="palm">
+    <xacro:solid_box label="palm" xyz="0.006 0 0.036"
+                    size="0.038 0.18 0.072" rgba="0.18 0.23 0.27 1"/>
+  </link>
+
+  <joint name="wrist_pitch" type="revolute">
+    <parent link="forearm"/>
+    <child link="palm"/>
+    <origin xyz="${link2_length} 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="1.4" effort="20" velocity="1"/>
+  </joint>
+
+  <link name="left_finger">
+    <xacro:solid_box label="left_finger" xyz="0.087 0 0.045"
+                    size="0.16 0.018 0.035" rgba="0.91 0.61 0.20 1"/>
+  </link>
+  <joint name="grip_open" type="prismatic">
+    <parent link="palm"/>
+    <child link="left_finger"/>
+    <origin xyz="0 0.009 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="${gripper_span / 2}" effort="30" velocity="0.1"/>
+  </joint>
+
+  <link name="right_finger">
+    <xacro:solid_box label="right_finger" xyz="0.087 0 0.045"
+                    size="0.16 0.018 0.035" rgba="0.91 0.61 0.20 1"/>
+  </link>
+  <joint name="grip_open_right" type="prismatic">
+    <parent link="palm"/>
+    <child link="right_finger"/>
+    <origin xyz="0 -0.009 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="0" upper="${gripper_span / 2}" effort="30" velocity="0.1"/>
+    <mimic joint="grip_open" multiplier="1" offset="0"/>
+  </joint>
+
+  <link name="tool_frame">
+    <visual>
+      <geometry><sphere radius="0.012"/></geometry>
+      <material name="tool_marker"><color rgba="0.05 0.85 0.46 1"/></material>
+    </visual>
+  </link>
+  <joint name="palm_to_tool" type="fixed">
+    <parent link="palm"/>
+    <child link="tool_frame"/>
+    <origin xyz="0.12 0 0"/>
+  </joint>
+</xacro:macro>
+</robot>

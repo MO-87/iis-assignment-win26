@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="manipulator" params="base_height lift_travel link1_length link2_length reach_travel">
+  <link name="lift_carriage">
+    <xacro:solid_box label="carriage" xyz="-0.08 0 0.043"
+                    size="0.22 0.15 0.05" rgba="0.32 0.49 0.66 1"/>
+    <xacro:solid_box label="left_rail" xyz="${link1_length / 2} 0.055 0"
+                    size="${link1_length} 0.025 0.055" rgba="0.24 0.44 0.66 1"/>
+    <xacro:solid_box label="right_rail" xyz="${link1_length / 2} -0.055 0"
+                    size="${link1_length} 0.025 0.055" rgba="0.24 0.44 0.66 1"/>
+  </link>
+
+  <joint name="lift" type="prismatic">
+    <parent link="base_link"/>
+    <child link="lift_carriage"/>
+    <origin xyz="0 0 ${base_height}"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="${lift_travel}" effort="100" velocity="0.3"/>
+  </joint>
+
+  <link name="forearm">
+    <xacro:property name="rail_overlap" value="${reach_travel + 0.05}"/>
+    <xacro:solid_box label="forearm" xyz="${(link2_length - rail_overlap) / 2} 0 0"
+                    size="${link2_length + rail_overlap} 0.04 0.032"
+                    rgba="0.60 0.70 0.79 1"/>
+  </link>
+
+  <joint name="reach" type="prismatic">
+    <parent link="lift_carriage"/>
+    <child link="forearm"/>
+    <origin xyz="${link1_length} 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="0" upper="${reach_travel}" effort="100" velocity="0.3"/>
+  </joint>
+</xacro:macro>
+</robot>

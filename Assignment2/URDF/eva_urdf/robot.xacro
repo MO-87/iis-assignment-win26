@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<robot name="eva_drink_assistant" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:arg name="link1_length" default="0.32"/>
+  <xacro:property name="base_radius" value="0.23"/>
+  <xacro:property name="base_height" value="0.32"/>
+  <xacro:property name="lift_travel" value="0.88"/>
+  <xacro:property name="reach_travel" value="0.40"/>
+  <xacro:property name="link2_length" value="0.30"/>
+  <xacro:property name="gripper_span" value="0.14"/>
+
+  <xacro:macro name="solid_box" params="label xyz size rgba">
+    <visual>
+      <origin xyz="${xyz}"/>
+      <geometry><box size="${size}"/></geometry>
+      <material name="${label}_material"><color rgba="${rgba}"/></material>
+    </visual>
+    <collision>
+      <origin xyz="${xyz}"/>
+      <geometry><box size="${size}"/></geometry>
+    </collision>
+  </xacro:macro>
+
+  <xacro:include filename="base.xacro"/>
+  <xacro:include filename="arm.xacro"/>
+  <xacro:include filename="gripper.xacro"/>
+
+  <link name="world"/>
+  <xacro:pedestal base_radius="${base_radius}" base_height="${base_height}"
+                  lift_travel="${lift_travel}"/>
+  <joint name="world_to_base" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <xacro:manipulator base_height="${base_height}" lift_travel="${lift_travel}"
+                     link1_length="$(arg link1_length)" link2_length="${link2_length}"
+                     reach_travel="${reach_travel}"/>
+  <xacro:parallel_gripper link2_length="${link2_length}" gripper_span="${gripper_span}"/>
+
+  <!-- Fixed reference objects for the two reach demonstrations. -->
+  <xacro:macro name="fixture" params="label xyz size rgba">
+    <link name="${label}">
+      <xacro:solid_box label="${label}" xyz="0 0 0" size="${size}" rgba="${rgba}"/>
+    </link>
+    <joint name="world_to_${label}" type="fixed">
+      <parent link="world"/>
+      <child link="${label}"/>
+      <origin xyz="${xyz}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:fixture label="fridge" xyz="0.42 0.435 0.675"
+                 size="0.50 0.53 1.35" rgba="0.76 0.81 0.86 1"/>
+  <xacro:fixture label="open_door" xyz="0.72 0.15 0.675"
+                 size="0.50 0.035 1.30" rgba="0.65 0.71 0.79 1"/>
+  <xacro:fixture label="lower_shelf" xyz="0.81 0 0.385"
+                 size="0.18 0.27 0.03" rgba="0.55 0.65 0.75 1"/>
+  <xacro:fixture label="upper_shelf" xyz="0.81 0 1.185"
+                 size="0.18 0.27 0.03" rgba="0.55 0.65 0.75 1"/>
+  <xacro:fixture label="milk_carton" xyz="0.81 0 0.50"
+                 size="0.10 0.10 0.20" rgba="0.91 0.94 0.98 1"/>
+  <xacro:fixture label="counter" xyz="1.28 0 0.45"
+                 size="0.60 0.60 0.90" rgba="0.55 0.40 0.30 1"/>
+
+  <link name="mug_target">
+    <visual>
+      <geometry><cylinder radius="0.08" length="0.12"/></geometry>
+      <material name="mug_blue"><color rgba="0.18 0.43 0.82 1"/></material>
+    </visual>
+  </link>
+  <joint name="world_to_mug" type="fixed">
+    <parent link="world"/>
+    <child link="mug_target"/>
+    <origin xyz="1.11 0 0.96"/>
+  </joint>
+</robot>

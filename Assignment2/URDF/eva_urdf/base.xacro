@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:macro name="pedestal" params="base_radius base_height lift_travel">
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 ${base_height / 2}"/>
+      <geometry><cylinder radius="${base_radius}" length="${base_height}"/></geometry>
+      <material name="pedestal_blue"><color rgba="0.18 0.32 0.50 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${base_height / 2}"/>
+      <geometry><cylinder radius="${base_radius}" length="${base_height}"/></geometry>
+    </collision>
+    <xacro:solid_box label="mast" xyz="-0.19 0 ${base_height + lift_travel / 2}"
+                    size="0.06 0.10 ${lift_travel}" rgba="0.24 0.39 0.57 1"/>
+  </link>
+</xacro:macro>
+</robot>
