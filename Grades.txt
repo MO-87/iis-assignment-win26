@@ -1,0 +1,4 @@
+Assignment 1: 3.35/3.5
+
+- Contact depth is not a controllable parameter. its physics should be simulated in the SDT.
+- battery drain predictive model should go into the SDT not warrant gate.
